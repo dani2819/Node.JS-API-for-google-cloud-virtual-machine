@@ -1,7 +1,3 @@
-# CS-E4100 Fall 2016
-* **Mobile Cloud Computing (5 cr)**
-* **Group 9 _Amazing Alpacas_ - Project 1 - Thin-client computing**
-
 This service provides a thin-client computing service specifically targeted to mobile devices. 
 The Application has the following functions:
 * Allows the user to select a specific application from a list of supported ones (Open Office or Inkscape);
@@ -10,31 +6,6 @@ The Application has the following functions:
 * connects to such a virtual machine through a remote desktop protocol;
 * shows the content of the remote virtual machine and allows the user to interact with the application;
 * upon termination of the session, suspends or shuts down the virtual machine.
-
-
-## Installation & Running
-Once the repository has been cloned, simply run the run.sh-script in the main folder.
-It will install node and npm if needed, and start a local backend- server at `http://localhost:8080`
-
-Note! The script must be run in the main folder.
-
-For the Android app to be able to locate the backend server, it is necessary to update the
-`fi.aalto.cs.e4100.g09.project1` class and edit the constant `IP_HOST` to the address of the
-backend server.
-
-Credentials to use in the app:
-
-* User: `user`
-* Password: `pass`
-
-To install, run and stop the virtual machines, scripts are provided in the scripts- folder. For this implementation,
-however, using them is not necessary.
-
-## Components
-
-The service can be divided into 4 separate parts: Front-end web-application, front-end Android application,
-backend server and distinct VMs for each application. The frontends communicate with the backend through a
-REST API.
 
 The backend is meant to be run locally, but it can also be deployed to cloud. The backend handles the authentication
 of the user, as well as starting and stopping VM-instances and informing the user which applications are available
