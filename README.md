@@ -21,7 +21,10 @@ tasked with connecting the user to the VM.
 API
 
 The communication between the front- and back-ends happens through a restfUll API, as shown below
-/login
+´## API
+The communication between the front- and back-ends happens through a restfUll API, as shown below
+
+* /login
 --- POST
 ------ Logs the user in and generates a valid JSON web token for them
 ------ Parameters (JSON):
@@ -40,11 +43,11 @@ The communication between the front- and back-ends happens through a restfUll AP
 --------------- username: String; the username that was trying to log in
 --------------- login: String; "Failure"
 
-/listInstance
+* /listInstance
 --- POST
 ------ Returns the list of available applications for the given user
 ------ Parameters (JSON)
---------- token: String; the JSON web token for the authenticated user
+--------- token: String; the JSON web token for the authenticated  user
 ------ Responses
 --------- HTTP 200 (SUCCESS)
 ------------ Returns JSON with parameters
@@ -63,7 +66,7 @@ backend server is not recognized due to incorrect credentials.
 ------------ Returns JSON with parameters
 --------------- error: String; errormessage
 
-/appStart
+* /appStart
 --- POST
 ------ Starts the given application and returns connection details for it once it has started
 ------ Parameters (JSON)
@@ -85,7 +88,7 @@ backend server is not recognized due to incorrect credentials.
 ------------ Returns JSON with parameters
 --------------- error: String; errormessage
 
-/appStop
+* /appStop
 --- POST
 ------ Shuts down the given VM
 ------ Parameters (JSON)
