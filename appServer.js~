@@ -1,0 +1,255 @@
+var express = require('express');
+var formidable = require("formidable");
+var app = express();
+var fs = require('fs');
+
+var google = require('googleapis');
+var compute = google.compute('v1');
+
+// start of authentication
+app.get('/login', function (req, res) {
+    fs.readFile('form.html', function (err, data) {
+        res.writeHead(200, {
+            'Content-Type': 'text/html',
+            'Content-Length': data.length
+        });
+        res.write(data);
+        res.end();
+	});
+});
+
+app.post('/login', function (req, res) {
+    var loginfields = [];
+    name = false;
+    pass = false;
+    nameVaule = "";
+    passValue = "";
+    var login = new formidable.IncomingForm();
+    var loginJSON = {
+      username: "",
+      password: "",
+      token: "",
+      login: ""
+    };
+    //token generation
+    var token = 'sha1$GENERATED_TOKEN_IN_JSONWEBTORKEN';
+    
+    login.on('field', function (field, value) {
+    	
+        if(field=="username" && value=="user"){
+        	name = true;
+            loginJSON.username = value;
+        }
+        if (field=="password" && value=="pass"){
+        	pass = true;
+            loginJSON.password = value;
+        }
+        loginfields[field] = value;
+    });
+
+    login.on('end', function () {
+
+        if(name===true && pass===true){
+            res.writeHead(200, {
+                'content-type': 'text/plain'
+            });
+            loginJSON.login = "Success";
+            loginJSON.token = token;
+        	console.log("Authenticated");
+        	res.end(JSON.stringify(loginJSON));
+        }
+        else{
+            res.writeHead(403, {
+                'content-type': 'text/plain'
+            });
+            loginJSON.login = "Failure";
+        	console.log("not authenticated");
+        	res.end(JSON.stringify(loginJSON));
+        }
+    });
+    login.parse(req);
+});
+// End of authentication
+
+//Start of instance starting
+app.get('/appStart', function (req, res) {
+    fs.readFile('appStart.html', function (err, data) {
+        res.writeHead(200, {
+            'Content-Type': 'text/html',
+            'Content-Length': data.length
+        });
+        res.write(data);
+        res.end();
+	});
+});
+
+app.post('/appStart', function (req, res) {
+    var appfields = [];
+    var appName;
+    var appToken;
+    var appStart = new formidable.IncomingForm();
+    appStart.on('field', function (field, value) {
+    	if (field == 'appName'){
+            appName = value;
+        }
+        if (field == 'appToken'){
+            appToken = value;            
+        }
+        appfields[field] = value;
+    });
+    
+//Token verification done here -->
+
+    google.auth.getApplicationDefault(function(err, authClient) {
+        if (err) {
+        console.log('Authentication failed because of ', err);
+        return;
+        }
+        if (authClient.createScopedRequired && authClient.createScopedRequired()) {
+        var scopes = ['https://www.googleapis.com/auth/cloud-platform'];
+        authClient = authClient.createScoped(scopes);
+        }
+
+        var request = {
+            project: "mcc-2016-g09-p1",
+            region: "europe-west1",
+            address: appName,
+            auth: authClient
+        };
+       
+        compute.addresses.get(request, function(err, result) {
+            if (err) {
+                console.log(err);
+                res.end(err);
+            } else {
+                var instanceOut = {
+                    address: result.address,
+                    port:'8080',
+                    password:'pass',
+                    token: appToken
+                };
+                console.log(instanceOut);
+                res.end(JSON.stringify(instanceOut));
+            }
+        });
+    });
+
+    appStart.on('end', function () {
+        res.writeHead(200, {
+            'content-type': 'text/plain'
+        });
+    });
+    appStart.parse(req);
+});
+//End of instance starting
+
+//Start of instance stopping
+app.get('/appStop', function (req, res) {
+    fs.readFile('appStop.html', function (err, data) {
+        res.writeHead(200, {
+            'Content-Type': 'text/html',
+            'Content-Length': data.length
+        });
+        res.write(data);
+        res.end();
+	});
+});
+
+app.post('/appStop', function (req, res) {
+    var appStopfield;
+    var appStop = new formidable.IncomingForm();
+    appStop.on('field', function (field, value) {
+    	appStopfield = value;
+    });
+    
+    google.auth.getApplicationDefault(function(err, authClient) {
+        if (err) {
+        console.log('Authentication failed because of ', err);
+        return;
+        }
+        if (authClient.createScopedRequired && authClient.createScopedRequired()) {
+        var scopes = ['https://www.googleapis.com/auth/cloud-platform'];
+        authClient = authClient.createScoped(scopes);
+        }
+
+        var request = {
+            project: "mcc-2016-g09-p1",
+        	zone: "europe-west1-d",
+        	instance: appStopfield,
+            auth: authClient
+         };
+  
+        compute.instances.stop(request, function(err, result) {
+            if (err) {
+                console.log(err);
+                res.end("Instance stop failure");
+            } else {
+                console.log(result);
+                res.end("Instance stop success");
+            }
+        });
+    });
+
+    appStop.on('end', function () {
+        res.writeHead(200, {
+            'content-type': 'text/plain'
+        });
+    });
+    appStop.parse(req);
+});
+//End of instance stopping
+
+//Start of list instances
+var instanceApp = express();
+
+instanceApp.get('/', function (req, res) {
+    google.auth.getApplicationDefault(function(err, authClient) {
+        if (err) {
+            console.log('Authentication failed because of ', err);
+            return;
+        }
+        if (authClient.createScopedRequired && authClient.createScopedRequired()) {
+            var scopes = ['https://www.googleapis.com/auth/cloud-platform'];
+            authClient = authClient.createScoped(scopes);
+        }
+
+        var request = {
+            project: "mcc-2016-g09-p1",
+            region: "europe-west1",
+//          address: "inst-1",
+            zone: "europe-west1-c",
+            auth: authClient
+        };
+
+        compute.instances.list(request, function(err, result) {
+            if (err) {
+                console.log(err);
+            } else {
+                var instanceList = {
+//                    id: result.items.map(function (out){return out.id;}),
+                    name: result.items.map(function (out){return out.name;}),
+                    description: result.items.map(function (out){return out.description;}),
+//                    status: result.items.map(function (out){return out.status;})
+                };
+                console.log(instanceList);
+                res.end(JSON.stringify(instanceList));
+            }
+        });
+    });
+    
+/*    listInstance.on('end', function () {
+        res.writeHead(200, {
+            'content-type': 'text/plain'
+        });
+        res.end();
+    });
+//    listInstance.parse(req);*/
+});
+
+app.use('/listInstance', instanceApp);
+//End of list instances
+
+var server = app.listen(8080, function () {
+   var port = server.address().port;
+   console.log("Application Server listening at http://localhost:%s", port);
+});

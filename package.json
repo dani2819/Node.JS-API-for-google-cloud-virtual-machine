@@ -1,0 +1,14 @@
+{
+  "name": "appServer",
+  "version": "1.0.0",
+  "description": "The server",
+  "dependencies": {
+    "express": "^4.14.0",
+    "formidable": "^1.0.17",
+    "googleapis": "^14.0.0",
+    "body-parser": "1.15.2",
+    "jsonwebtoken": "7.1.9",
+    "nodejs-websocket": "1.7.0",
+    "tcp-port-used": "^0.1.2"
+  }
+}
