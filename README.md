@@ -24,86 +24,87 @@ The communication between the front- and back-ends happens through a restfUll AP
 ´## API
 The communication between the front- and back-ends happens through a restfUll API, as shown below
 
-   /login
-      --- POST
-      ------ Logs the user in and generates a valid JSON web token for them
-      ------ Parameters (JSON):
-      --------- username: name of the user
-      --------- password: password of the user (hashed with SHA-256)
-      ------ Responses
-      --------- HTTP 200 (SUCCESS)
-      ------------ Upon successful login
-      ------------ Returns JSON with parameters
-      --------------- username: String; the username that was logged in
-      --------------- token: String; the jsonwebtoken for the user
-      --------------- login: String; "Success"
-      --------- HTTP 403 (NOT AUTHORIZED)
-      ------------ Upon a failed login attempt due to wrong username and/or password
-      ------------ Returns JSON with parameters
-      --------------- username: String; the username that was trying to log in
-      --------------- login: String; "Failure"
+
+
+    /login
+    --- POST
+    ------ Logs the user in and generates a valid JSON web token for them
+    ------ Parameters (JSON):
+    --------- username: name of the user
+    --------- password: password of the user (hashed with SHA-256)
+    ------ Responses
+    --------- HTTP 200 (SUCCESS)
+    ------------ Upon successful login
+    ------------ Returns JSON with parameters
+    --------------- username: String; the username that was logged in
+    --------------- token: String; the jsonwebtoken for the user
+    --------------- login: String; "Success"
+    --------- HTTP 403 (NOT AUTHORIZED)
+    ------------ Upon a failed login attempt due to wrong username and/or password
+    ------------ Returns JSON with parameters
+    --------------- username: String; the username that was trying to log in
+    --------------- login: String; "Failure"
 
     /listInstance
-      --- POST
-      ------ Returns the list of available applications for the given user
-      ------ Parameters (JSON)
-      --------- token: String; the JSON web token for the authenticated user
-      ------ Responses
-      --------- HTTP 200 (SUCCESS)
-      ------------ Returns JSON with parameters
-      --------------- name: String; name of the application
-      ------------------ Currently supported names: "openoffice", "inkscape"
-      --------------- label: String; label of the application
-      --------------- description: String; Description for the application
-      --------- HTTP 403 (NOT AUTHORIZED)
-      ------------ Upon a failed login attempt due to wrong username and/or password
-      ------------ Returns JSON with parameters
-      --------------- username: String; the username that was trying to log in
-      --------------- login: String; "Failure"
-      --------- HTTP 500 (SERVER ERROR)
-      ------------ Sent when something went wrong with the VM server. Most common reason for this is when the
-      backend server is not recognized due to incorrect credentials.
-      ------------ Returns JSON with parameters
-      --------------- error: String; errormessage
+    --- POST
+    ------ Returns the list of available applications for the given user
+    ------ Parameters (JSON)
+    --------- token: String; the JSON web token for the authenticated user
+    ------ Responses
+    --------- HTTP 200 (SUCCESS)
+    ------------ Returns JSON with parameters
+    --------------- name: String; name of the application
+    ------------------ Currently supported names: "openoffice", "inkscape"
+    --------------- label: String; label of the application
+    --------------- description: String; Description for the application
+    --------- HTTP 403 (NOT AUTHORIZED)
+    ------------ Upon a failed login attempt due to wrong username and/or password
+    ------------ Returns JSON with parameters
+    --------------- username: String; the username that was trying to log in
+    --------------- login: String; "Failure"
+    --------- HTTP 500 (SERVER ERROR)
+    ------------ Sent when something went wrong with the VM server. Most common reason for this is when the
+    backend server is not recognized due to incorrect credentials.
+    ------------ Returns JSON with parameters
+    --------------- error: String; errormessage
 
     /appStart
-      --- POST
-      ------ Starts the given application and returns connection details for it once it has started
-      ------ Parameters (JSON)
-      --------- appName: String; the name of the application to start
-      --------- appToken: String; the JSON web token for the authenticated user
-      ------ Responses
-      --------- HTTP 200 (SUCCESS)
-      ------------ Returns JSON with parameters
-      --------------- ip: String; ip-address of the started VM
-      --------------- pass: String; the password for the VM
-      --------------- port_a: Integer; port numer to connect to with VNC protocol
-      --------------- port_w: Integer; port number for the connection socket. When this is closed, the VM is shut down
-      --------- HTTP 403 (UNAUTHORIZED)
-      ------------ Sent when the JSON Web Token could not be authenticated
-      ------------ Response contains no data
-      --------- HTTP 500 (SERVER ERROR)
-      ------------ Sent when something went wrong with the VM server. Most common reason for this is when the
-      backend server is not recognized due to incorrect credentials.
-      ------------ Returns JSON with parameters
-      --------------- error: String; errormessage
+    --- POST
+    ------ Starts the given application and returns connection details for it once it has started
+    ------ Parameters (JSON)
+    --------- appName: String; the name of the application to start
+    --------- appToken: String; the JSON web token for the authenticated user
+    ------ Responses
+    --------- HTTP 200 (SUCCESS)
+    ------------ Returns JSON with parameters
+    --------------- ip: String; ip-address of the started VM
+    --------------- pass: String; the password for the VM
+    --------------- port_a: Integer; port numer to connect to with VNC protocol
+    --------------- port_w: Integer; port number for the connection socket. When this is closed, the VM is shut down
+    --------- HTTP 403 (UNAUTHORIZED)
+    ------------ Sent when the JSON Web Token could not be authenticated
+    ------------ Response contains no data
+    --------- HTTP 500 (SERVER ERROR)
+    ------------ Sent when something went wrong with the VM server. Most common reason for this is when the
+    backend server is not recognized due to incorrect credentials.
+    ------------ Returns JSON with parameters
+    --------------- error: String; errormessage
 
     /appStop
-      --- POST
-      ------ Shuts down the given VM
-      ------ Parameters (JSON)
-      --------- instancename: String; name of the app to shut down
-      --------- appToken: String; the JSON web token for the authenticated user
-      ------ Responses
-      --------- HTTP 200 (SUCCESS)
-      ------------ Returns JSON with parameters
-      --------------- shutdown: String; "success"
-      --------- HTTP 403 (UNAUTHORIZED)
-      ------------ Sent when the JSON Web Token could not be authenticated
-      ------------ Response contains a string: "Bad token"
-      --------- HTTP 500 (SERVER ERROR)
-      ------------ Sent when something went wrong with the VM server. Most common reason for this is when the
-      backend server is not recognized due to incorrect credentials.
-      ------------ Returns JSON with parameters
-      --------------- error: String; errormessage
-
+    --- POST
+    ------ Shuts down the given VM
+    ------ Parameters (JSON)
+    --------- instancename: String; name of the app to shut down
+    --------- appToken: String; the JSON web token for the authenticated user
+    ------ Responses
+    --------- HTTP 200 (SUCCESS)
+    ------------ Returns JSON with parameters
+    --------------- shutdown: String; "success"
+    --------- HTTP 403 (UNAUTHORIZED)
+    ------------ Sent when the JSON Web Token could not be authenticated
+    ------------ Response contains a string: "Bad token"
+    --------- HTTP 500 (SERVER ERROR)
+    ------------ Sent when something went wrong with the VM server. Most common reason for this is when the
+    backend server is not recognized due to incorrect credentials.
+    ------------ Returns JSON with parameters
+    --------------- error: String; errormessage
